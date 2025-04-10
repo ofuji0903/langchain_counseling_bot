@@ -1,0 +1,11 @@
+以下のユーザー発言をもとに、カウンセリングのステージを以下から1つ選んで出力してください：
+- 初期（rapport）
+- 傾聴（active listening）
+- 助言（advice）
+- 深掘り（exploration）
+- 危機対応（crisis）
+
+発言:
+{input}
+
+ステージ:
