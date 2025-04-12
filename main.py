@@ -1,36 +1,40 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain, RetrievalQA
-from langchain.prompts import PromptTemplate
-from langchain.memory import ConversationBufferMemory
-from langchain.document_loaders import TextLoader
-from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
 import os
+import streamlit as st
 from dotenv import load_dotenv
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationChain
+from langchain_openai import ChatOpenAI  # ← 最新構成ではここ
+# ※ langchain_community も使うなら別途 import
 
+# .envの読み込み
 load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+if not api_key:
+    st.error("OPENAI_API_KEY が .env に設定されていません")
+    st.stop()
 
-stage_prompt = PromptTemplate.from_file("prompts/stage_classification.txt", input_variables=["input"])
-stage_chain = LLMChain(llm=llm, prompt=stage_prompt)
+# LLMとメモリの設定
+llm = ChatOpenAI(
+    temperature=0,
+    model="gpt-3.5-turbo",
+    openai_api_key=api_key
+)
 
-loader = TextLoader("knowledge/counseling_basics.txt")
-docs = loader.load()
-vectordb = Chroma.from_documents(documents=docs, embedding=OpenAIEmbeddings(), persist_directory="vectorstore")
-vectordb.persist()
-retriever = vectordb.as_retriever()
+memory = ConversationBufferMemory()
 
-qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, memory=memory)
+# LangChainで会話チェーン作成
+chain = ConversationChain(
+    llm=llm,
+    memory=memory,
+    verbose=True
+)
 
-while True:
-    user_input = input("User: ")
-    if user_input.lower() in ["exit", "quit"]:
-        break
+# Streamlit UI
+st.title("LangChain カウンセリングチャットボット")
 
-    stage = stage_chain.run(input=user_input)
-    print(f"[診断ステージ]: {stage.strip()}")
+user_input = st.text_input("あなた: ", "")
 
-    response = qa_chain.run(user_input)
-    print(f"Bot: {response}\n")
+if user_input:
+    response = chain.run(user_input)
+    st.write(f"カウンセラー: {response}")
