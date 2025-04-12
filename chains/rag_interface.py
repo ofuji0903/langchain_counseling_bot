@@ -1,0 +1,1 @@
+from rag.rag_stub import retrieve_knowledge
