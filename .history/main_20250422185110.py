@@ -47,15 +47,6 @@ if user_input:
     # AIの応答を履歴に追加
     st.session_state.history.append({"role": "bot", "message": response})
 
-    # ✅ 開発者向けログの表示
-    with st.expander("🛠 開発者ログ（内部状態）", expanded=False):
-        st.code(f"🔹 User Input:\n{user_input}", language="text")
-        st.code(f"🔹 Stage:\n{result.get('stage', '-')}", language="text")
-        st.code(f"🔹 Summary (RAG):\n{result.get('knowledge_summary', '-')}", language="text")
-        st.code(f"🔹 Emotion Score:\n{result.get('emotional_intensity', '-')}", language="text")
-        st.code(f"🔹 Response:\n{result.get('response', '-')}", language="text")
-        st.code(f"🔹 History (user only):\n{[item['message'] for item in st.session_state.history if item['role'] == 'user']}", language="text")
-
 # 最新10件のメッセージを表示
 for item in st.session_state.history[-10:]:
     print(f"🔍 ログ: {item['role']} => {item['message']}")

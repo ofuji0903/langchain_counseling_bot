@@ -1,1 +1,12 @@
-from rag.rag_stub import retrieve_knowledge
+# chains/rag_interface.py
+
+def retrieve_knowledge(stage: str, user_input: str) -> str:
+    # 仮ナレッジ辞書（デモ用）
+    dummy_knowledge = {
+        "雑談・初期整理": "はじめまして。話したいことがあれば、どんなことでも教えてください。",
+        "情緒の沈み・自己否定": "落ち込んでいるときは、誰かに気持ちを話すことがとても大切です。",
+        "過去の経験の影響": "過去の出来事は今の自分に大きな影響を与えることがあります。少しずつ整理していきましょう。",
+        "実生活での困難・課題整理": "日常生活の中での困りごとを一緒に考えていきましょう。具体的な状況を教えてください。"
+    }
+
+    return dummy_knowledge.get(stage, "その内容について、詳しく教えてもらえますか？")

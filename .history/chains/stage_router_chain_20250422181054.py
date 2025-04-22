@@ -23,7 +23,7 @@ def get_stage(user_input: str, conversation_history: List[str] = None) -> str:
 
     chain = (
         prompt
-        | ChatOpenAI(model="gpt-4o-mini")
+        | ChatOpenAI(model="gpt-4-turbo-preview")
         | StrOutputParser()
     )
 
